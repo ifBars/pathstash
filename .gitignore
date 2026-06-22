@@ -11,5 +11,6 @@ specs/
 notes/
 .codex/
 .devdrop/
+.pathstash/
 *.local.md
 *.internal.md

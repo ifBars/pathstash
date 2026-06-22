@@ -2,7 +2,7 @@
 
 ## Cloudflare resources
 
-V0 uses:
+The current hosted relay still uses the original Devdrop resource names while the public project moves to PathStash:
 
 - Worker: `devdrop-relay`
 - D1 database: `devdrop-meta`
@@ -13,7 +13,7 @@ V0 uses:
 ## Commands
 
 ```powershell
-cd C:\Users\ghost\Desktop\Coding\Devdrop\apps\relay
+cd apps\relay
 bun install
 bun run cf:types
 bunx wrangler secret put DEV_AUTH_TOKEN

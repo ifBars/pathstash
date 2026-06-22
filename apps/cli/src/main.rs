@@ -15,11 +15,16 @@ use sha2::{Digest, Sha256};
 
 const DEFAULT_RELAY: &str = "https://devdrop-relay.ifbars.workers.dev";
 const DEFAULT_MAX_BLOB_BYTES: u64 = 1_048_576;
-const KEYRING_SERVICE: &str = "devdrop";
+const KEYRING_SERVICE: &str = "pathstash";
+const LEGACY_KEYRING_SERVICE: &str = "devdrop";
+const STATE_DIR: &str = ".pathstash";
+const LEGACY_STATE_DIR: &str = ".devdrop";
+const IGNORE_FILE: &str = ".pathstashignore";
+const LEGACY_IGNORE_FILE: &str = ".devdropignore";
 
 #[derive(Parser)]
-#[command(name = "devdrop")]
-#[command(about = "Devdrop code-root sync prototype CLI", version)]
+#[command(name = "pathstash")]
+#[command(about = "PathStash workspace sync CLI", version)]
 struct Cli {
     #[command(subcommand)]
     command: Command,
@@ -44,7 +49,7 @@ enum Command {
         root: PathBuf,
         #[arg(long, default_value = DEFAULT_RELAY)]
         relay: String,
-        #[arg(long, env = "DEVDROP_TOKEN")]
+        #[arg(long, env = "PATHSTASH_TOKEN")]
         token: Option<String>,
         #[arg(long, default_value_t = DEFAULT_MAX_BLOB_BYTES)]
         max_blob_bytes: u64,
@@ -58,7 +63,7 @@ enum Command {
         workspace_id: Option<String>,
         #[arg(long)]
         relay: Option<String>,
-        #[arg(long, env = "DEVDROP_TOKEN")]
+        #[arg(long, env = "PATHSTASH_TOKEN")]
         token: Option<String>,
         #[arg(long)]
         force: bool,
@@ -68,7 +73,7 @@ enum Command {
     Login {
         #[arg(long, default_value = DEFAULT_RELAY)]
         relay: String,
-        #[arg(long, env = "DEVDROP_TOKEN")]
+        #[arg(long, env = "PATHSTASH_TOKEN")]
         token: Option<String>,
     },
     Logout {
@@ -206,8 +211,8 @@ async fn main() -> Result<()> {
 
 fn init(root: &Path, name: Option<String>) -> Result<()> {
     let root = normalize_root(root)?;
-    let devdrop = root.join(".devdrop");
-    fs::create_dir_all(&devdrop).with_context(|| format!("creating {}", devdrop.display()))?;
+    let state_dir = root.join(STATE_DIR);
+    fs::create_dir_all(&state_dir).with_context(|| format!("creating {}", state_dir.display()))?;
 
     let config = Config {
         name: name.unwrap_or_else(|| {
@@ -220,9 +225,9 @@ fn init(root: &Path, name: Option<String>) -> Result<()> {
         ignore: default_ignores(),
     };
 
-    write_json(&devdrop.join("config.json"), &config)?;
-    write_ignore(&root.join(".devdropignore"), &config.ignore)?;
-    println!("initialized {}", devdrop.display());
+    write_json(&state_dir.join("config.json"), &config)?;
+    write_ignore(&root.join(IGNORE_FILE), &config.ignore)?;
+    println!("initialized {}", state_dir.display());
     Ok(())
 }
 
@@ -349,7 +354,7 @@ async fn hydrate(
     let workspace_id = workspace_id
         .or_else(|| state.as_ref().map(|existing| existing.workspace_id.clone()))
         .context(
-            "workspace id required; pass --workspace-id or run from an initialized Devdrop root",
+            "workspace id required; pass --workspace-id or run from an initialized PathStash root",
         )?;
     let relay = relay
         .or_else(|| state.as_ref().map(|existing| existing.relay.clone()))
@@ -396,7 +401,7 @@ async fn hydrate(
     };
     write_json(&state_path(&root), &state)?;
     write_json(
-        &root.join(".devdrop").join("last-manifest.json"),
+        &root.join(STATE_DIR).join("last-manifest.json"),
         &current.manifest,
     )?;
 
@@ -445,9 +450,17 @@ fn auth_status(relay: &str) -> Result<()> {
     let relay = normalize_relay(relay);
     println!("relay: {relay}");
     println!(
-        "env token: {}",
-        if std::env::var("DEVDROP_TOKEN").is_ok() {
+        "PATHSTASH_TOKEN: {}",
+        if std::env::var("PATHSTASH_TOKEN").is_ok() {
             "present"
+        } else {
+            "missing"
+        }
+    );
+    println!(
+        "DEVDROP_TOKEN: {}",
+        if std::env::var("DEVDROP_TOKEN").is_ok() {
+            "present (legacy)"
         } else {
             "missing"
         }
@@ -504,6 +517,11 @@ fn resolve_auth_token(relay: &str, explicit: Option<&str>) -> Result<String> {
     if let Some(token) = explicit.filter(|token| !token.trim().is_empty()) {
         return Ok(token.trim().to_string());
     }
+    if let Ok(token) = std::env::var("PATHSTASH_TOKEN")
+        && !token.trim().is_empty()
+    {
+        return Ok(token.trim().to_string());
+    }
     if let Ok(token) = std::env::var("DEVDROP_TOKEN")
         && !token.trim().is_empty()
     {
@@ -514,13 +532,20 @@ fn resolve_auth_token(relay: &str, explicit: Option<&str>) -> Result<String> {
     }
 
     bail!(
-        "no relay token found; pass --token, set DEVDROP_TOKEN, or run `devdrop login --relay {}`",
+        "no relay token found; pass --token, set PATHSTASH_TOKEN, or run `pathstash login --relay {}`",
         normalize_relay(relay)
     )
 }
 
 fn stored_token(relay: &str) -> Result<Option<String>> {
-    match keyring_entry(&normalize_relay(relay))?.get_password() {
+    if let Some(token) = stored_token_for_service(KEYRING_SERVICE, relay)? {
+        return Ok(Some(token));
+    }
+    stored_token_for_service(LEGACY_KEYRING_SERVICE, relay)
+}
+
+fn stored_token_for_service(service: &str, relay: &str) -> Result<Option<String>> {
+    match keyring_entry_for_service(service, &normalize_relay(relay))?.get_password() {
         Ok(token) if !token.trim().is_empty() => Ok(Some(token)),
         Ok(_) => Ok(None),
         Err(_) => Ok(None),
@@ -528,8 +553,11 @@ fn stored_token(relay: &str) -> Result<Option<String>> {
 }
 
 fn keyring_entry(relay: &str) -> Result<KeyringEntry> {
-    KeyringEntry::new(KEYRING_SERVICE, &normalize_relay(relay))
-        .context("opening OS credential store")
+    keyring_entry_for_service(KEYRING_SERVICE, relay)
+}
+
+fn keyring_entry_for_service(service: &str, relay: &str) -> Result<KeyringEntry> {
+    KeyringEntry::new(service, &normalize_relay(relay)).context("opening OS credential store")
 }
 
 fn normalize_relay(relay: &str) -> String {
@@ -691,7 +719,8 @@ fn build_manifest(root: &Path) -> Result<Manifest> {
         .git_ignore(true)
         .git_exclude(true)
         .parents(true)
-        .add_custom_ignore_filename(".devdropignore");
+        .add_custom_ignore_filename(IGNORE_FILE)
+        .add_custom_ignore_filename(LEGACY_IGNORE_FILE);
 
     for result in builder.build() {
         let item = result?;
@@ -747,30 +776,46 @@ fn build_manifest(root: &Path) -> Result<Manifest> {
 }
 
 fn read_or_create_config(root: &Path) -> Result<Config> {
-    let path = root.join(".devdrop").join("config.json");
-    if path.exists() {
-        let data =
-            fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
-        return Ok(serde_json::from_str(&data)?);
+    for path in [config_path(root), legacy_config_path(root)] {
+        if path.exists() {
+            let data =
+                fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
+            return Ok(serde_json::from_str(&data)?);
+        }
     }
 
     init(root, None)?;
+    let path = config_path(root);
     let data = fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
     Ok(serde_json::from_str(&data)?)
 }
 
 fn read_state(root: &Path) -> Result<Option<State>> {
-    let path = state_path(root);
-    if !path.exists() {
-        return Ok(None);
+    for path in [state_path(root), legacy_state_path(root)] {
+        if path.exists() {
+            let data =
+                fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
+            return Ok(Some(serde_json::from_str(&data)?));
+        }
     }
 
-    let data = fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?;
-    Ok(Some(serde_json::from_str(&data)?))
+    Ok(None)
+}
+
+fn config_path(root: &Path) -> PathBuf {
+    root.join(STATE_DIR).join("config.json")
+}
+
+fn legacy_config_path(root: &Path) -> PathBuf {
+    root.join(LEGACY_STATE_DIR).join("config.json")
 }
 
 fn state_path(root: &Path) -> PathBuf {
-    root.join(".devdrop").join("state.json")
+    root.join(STATE_DIR).join("state.json")
+}
+
+fn legacy_state_path(root: &Path) -> PathBuf {
+    root.join(LEGACY_STATE_DIR).join("state.json")
 }
 
 fn write_json<T: Serialize>(path: &Path, value: &T) -> Result<()> {
@@ -808,6 +853,7 @@ fn ensure_root(root: &Path) -> Result<PathBuf> {
 fn default_ignores() -> Vec<String> {
     [
         ".git/",
+        ".pathstash/",
         ".devdrop/",
         "node_modules/",
         "target/",
@@ -816,6 +862,8 @@ fn default_ignores() -> Vec<String> {
         ".wrangler/",
         "internal/",
         "infra/live-test-token.txt",
+        ".pathstashignore",
+        ".devdropignore",
         "bin/",
         "obj/",
         "Library/",
@@ -882,6 +930,7 @@ mod tests {
         let ignores = default_ignores();
         assert!(should_skip_path("node_modules/react/index.js", &ignores));
         assert!(should_skip_path("target/debug/app.exe", &ignores));
+        assert!(should_skip_path(".pathstash/state.json", &ignores));
         assert!(should_skip_path(".devdrop/state.json", &ignores));
         assert!(should_skip_path("internal/context/source.md", &ignores));
         assert!(should_skip_path("infra/live-test-token.txt", &ignores));
@@ -891,8 +940,8 @@ mod tests {
     #[test]
     fn hash_bytes_matches_sha256_hex() {
         assert_eq!(
-            hash_bytes(b"devdrop"),
-            "83ef5a1b124e07cf450d87a6f2fe2884adfda5730a9a5deae893b1d349606e87"
+            hash_bytes(b"pathstash"),
+            "6fcb553aaf7517a1bc483ab49ed93c237ff1de89f448081a3c707b947a01db84"
         );
     }
 

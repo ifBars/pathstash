@@ -1,6 +1,6 @@
 # Release
 
-Devdrop's CLI is published from `apps/cli`.
+PathStash's CLI is published from `apps/cli`.
 
 ## Before a release
 
@@ -32,12 +32,8 @@ cargo publish --manifest-path apps/cli/Cargo.toml
 After crates.io finishes indexing the new version, verify the public install:
 
 ```powershell
-cargo install devdrop --locked
-devdrop --version
+cargo install pathstash --locked
+pathstash --version
 ```
 
-Until the crate is published to crates.io, the supported install path is:
-
-```powershell
-cargo install --git https://github.com/ifBars/devdrop devdrop --locked
-```
+The legacy `devdrop` crate is not the forward release target. Keep it available for existing users unless a compatibility wrapper is needed.

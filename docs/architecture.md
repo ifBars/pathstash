@@ -2,11 +2,11 @@
 
 ## Local client
 
-The local client scans a code root and builds a manifest. It respects Git ignore files and Devdrop-specific ignore rules, hashes files up to 1 MiB, and can upload those files as content-addressed blobs.
+The local client scans a code root and builds a manifest. It respects Git ignore files and PathStash-specific ignore rules, hashes files up to 1 MiB, and can upload those files as content-addressed blobs.
 
 Hydration runs in the opposite direction. It fetches the latest manifest for a workspace, creates directories, downloads available blobs, and refuses to overwrite conflicting files unless `--force` is passed.
 
-Later, the same Rust core can run as a daemon with a Tauri tray app.
+The CLI writes new local state under `.pathstash/` and reads legacy `.devdrop/` state during the rename. The same compatibility rule applies to `.pathstashignore` and `.devdropignore`.
 
 ## Relay
 
@@ -17,11 +17,11 @@ The relay stores workspace metadata and content-addressed blobs.
 - Queue: async event/audit path
 - Durable Objects: per-workspace live session coordination
 
-The test deployment uses a bearer token. Production auth should move to device keys, short-lived grants, and encrypted local state. The relay should not need plaintext secrets.
+The current hosted relay still uses the `devdrop-relay` worker name while the project moves to PathStash. Production auth should move from shared bearer tokens to device grants, short-lived tokens, and encrypted local state.
 
 ## Why the filesystem is not virtual yet
 
-Lazy file hydration is part of the long-term product, but a virtual filesystem is a hard first dependency. V0 uses normal files, explicit manifest uploads, and blob endpoints. That gives us a live product path before taking on Windows, macOS, and Linux filesystem integration.
+Lazy file hydration is part of the long-term product, but a virtual filesystem is a hard first dependency. The current release uses normal files, explicit manifest uploads, and blob endpoints. That gives us a live product path before taking on Windows, macOS, and Linux filesystem integration.
 
 ## Current sync model
 
@@ -29,7 +29,7 @@ Lazy file hydration is part of the long-term product, but a virtual filesystem i
 - Blob keys are the SHA-256 of the file body.
 - `push` uploads blobs before publishing the manifest, so a newly fetched manifest should point to available content.
 - Large files are visible in the manifest but skipped as blobs unless the user raises `--max-blob-bytes`.
-- `.devdrop/`, generated folders, and private internal folders stay local by default.
+- `.pathstash/`, `.devdrop/`, generated folders, and private internal folders stay local by default.
 
 ## Public API
 

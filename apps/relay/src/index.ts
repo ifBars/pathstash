@@ -151,7 +151,7 @@ async function route(request: Request, env: Env, ctx: ExecutionContext): Promise
     const db = await env.DB.prepare("SELECT 1 AS ok").first<{ ok: number }>();
     return json({
       ok: true,
-      service: "devdrop-relay",
+      service: "pathstash-relay",
       environment: env.ENVIRONMENT,
       database: db?.ok === 1 ? "ok" : "unknown",
       at: new Date().toISOString(),
@@ -360,6 +360,7 @@ async function getBlob(env: Env, hash: string): Promise<Response> {
   const headers = new Headers();
   object.writeHttpMetadata(headers);
   headers.set("etag", object.httpEtag);
+  headers.set("x-pathstash-sha256", hash);
   headers.set("x-devdrop-sha256", hash);
   return new Response(object.body, { headers });
 }

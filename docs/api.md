@@ -6,7 +6,7 @@ Base URL:
 https://devdrop-relay.ifbars.workers.dev
 ```
 
-Authenticated endpoints expect:
+The hosted relay still uses the Devdrop worker URL during the PathStash rename. Authenticated endpoints expect:
 
 ```text
 Authorization: Bearer <token>
@@ -26,7 +26,7 @@ Returns service status and D1 connectivity.
 GET /v1/auth/check
 ```
 
-Returns `200 OK` when the bearer token is valid. The CLI uses this during `devdrop login` before storing a relay token locally.
+Returns `200 OK` when the bearer token is valid. The CLI uses this during `pathstash login` before storing a relay token locally.
 
 ## Workspaces
 
@@ -38,8 +38,8 @@ Creates a workspace.
 
 ```json
 {
-  "name": "Devdrop",
-  "rootPath": "C:\\Users\\ghost\\Desktop\\Coding\\Devdrop"
+  "name": "PathStash",
+  "rootPath": "C:\\Users\\ghost\\Desktop\\Coding\\PathStash"
 }
 ```
 
@@ -85,4 +85,4 @@ The CLI uses these routes for files that have a SHA-256 in the manifest. Files w
 GET /v1/workspaces/:workspaceId/connect
 ```
 
-Opens a WebSocket connection to the workspace Durable Object. V0 uses this as a live coordination proof point; richer sync fanout can build on the same route.
+Opens a WebSocket connection to the workspace Durable Object. The current release uses this as a live coordination proof point; richer sync fanout can build on the same route.

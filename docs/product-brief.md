@@ -1,8 +1,8 @@
 # Product brief
 
-Devdrop is for developers who work from more than one machine and are tired of rebuilding their workspace by memory.
+PathStash is for developers who work from more than one machine and are tired of rebuilding their workspace by memory.
 
-Git is still the source of truth for code history. Devdrop handles the layer around Git: where repositories live, which generated folders should be ignored, what a machine needs to know before an agent starts working, and how to move that workspace map from one box to another.
+Git is still the source of truth for code history. PathStash handles the layer around Git: where repositories live, which generated folders should be ignored, what a machine needs to know before an agent starts working, and how to move that workspace map from one box to another.
 
 The first useful version should answer a simple question:
 
@@ -16,8 +16,8 @@ The first useful version should answer a simple question:
 
 ## First product loop
 
-1. Run `devdrop init` in a code root.
-2. Let Devdrop scan the tree while skipping generated folders.
+1. Run `pathstash init` in a code root.
+2. Let PathStash scan the tree while skipping generated folders.
 3. Push the manifest and small file blobs to a hosted relay.
 4. Hydrate the workspace on another machine without overwriting local work.
 

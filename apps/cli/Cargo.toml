@@ -1,11 +1,11 @@
 [package]
-name = "devdrop"
-version = "0.1.1"
+name = "pathstash"
+version = "0.1.0"
 edition = "2024"
 description = "A small CLI for syncing and hydrating developer workspace roots."
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/ifBars/devdrop"
-homepage = "https://github.com/ifBars/devdrop"
+repository = "https://github.com/ifBars/pathstash"
+homepage = "https://github.com/ifBars/pathstash"
 readme = "README.md"
 keywords = ["devtools", "sync", "workspace", "cli"]
 categories = ["command-line-utilities", "development-tools"]

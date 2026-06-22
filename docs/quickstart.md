@@ -1,6 +1,6 @@
 # Quickstart
 
-Devdrop has two pieces:
+PathStash has two pieces:
 
 - a Rust CLI that scans and hydrates a code root
 - a Cloudflare relay that stores workspace metadata, manifests, and content-addressed blobs
@@ -8,32 +8,32 @@ Devdrop has two pieces:
 ## Install the CLI
 
 ```powershell
-cargo install devdrop --locked
+cargo install pathstash --locked
 ```
 
 ## Initialize a workspace
 
 ```powershell
-devdrop init --root C:\Code --name "Desktop"
+pathstash init --root C:\Code --name "Desktop"
 ```
 
 This creates:
 
-- `.devdrop/config.json`
-- `.devdropignore`
+- `.pathstash/config.json`
+- `.pathstashignore`
 
-Both are local workspace files. `.devdrop/` is ignored by Git.
+PathStash also reads legacy `.devdrop/` and `.devdropignore` files so existing users do not lose state during the rename.
 
 ## Push a workspace
 
 Sign in once, then push:
 
 ```powershell
-devdrop login
-devdrop push --root C:\Code
+pathstash login
+pathstash push --root C:\Code
 ```
 
-`devdrop login` stores the relay token in the operating system credential store. `--token` and `DEVDROP_TOKEN` still work for CI and temporary sessions.
+`pathstash login` stores the relay token in the operating system credential store. `--token`, `PATHSTASH_TOKEN`, and the legacy `DEVDROP_TOKEN` still work for CI and temporary sessions.
 
 `push` sends the manifest and uploads file blobs up to 1 MiB. Larger files still appear in the manifest, but their contents are not uploaded by default.
 
@@ -42,7 +42,7 @@ devdrop push --root C:\Code
 Use the workspace id printed by `push`:
 
 ```powershell
-devdrop hydrate --root C:\Code-Restored --workspace-id "<workspace-id>"
+pathstash hydrate --root C:\Code-Restored --workspace-id "<workspace-id>"
 ```
 
 Hydration creates directories first, then downloads available blobs. Existing files are left alone unless you pass `--force`.
@@ -50,7 +50,7 @@ Hydration creates directories first, then downloads available blobs. Existing fi
 For a structure-only restore:
 
 ```powershell
-devdrop hydrate --root C:\Code-Restored --workspace-id "<workspace-id>" --directories-only
+pathstash hydrate --root C:\Code-Restored --workspace-id "<workspace-id>" --directories-only
 ```
 
 ## Check the hosted relay
@@ -61,7 +61,7 @@ Invoke-RestMethod https://devdrop-relay.ifbars.workers.dev/health
 
 The health endpoint does not require authentication.
 
-The hosted relay URL is the default:
+The hosted relay URL is still the default while the service moves to the PathStash name:
 
 ```text
 https://devdrop-relay.ifbars.workers.dev
@@ -74,6 +74,7 @@ Pass `--relay` only when using a different relay.
 The default ignore set skips generated and private local state:
 
 - `.git/`
+- `.pathstash/`
 - `.devdrop/`
 - `node_modules/`
 - `target/`

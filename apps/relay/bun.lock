@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "@devdrop/relay",
+      "name": "@pathstash/relay",
       "devDependencies": {
         "typescript": "^5.9.0",
         "wrangler": "^4.103.0",
