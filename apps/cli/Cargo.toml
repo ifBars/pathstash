@@ -1,0 +1,22 @@
+[package]
+name = "devdrop"
+version = "0.1.0"
+edition = "2024"
+description = "A small CLI for syncing and hydrating developer workspace roots."
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/ifBars/devdrop"
+homepage = "https://github.com/ifBars/devdrop"
+readme = "README.md"
+keywords = ["devtools", "sync", "workspace", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+
+[dependencies]
+anyhow = "1.0"
+clap = { version = "4.5", features = ["derive", "env"] }
+hex = "0.4"
+ignore = "0.4"
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+tokio = { version = "1.48", features = ["macros", "rt-multi-thread"] }

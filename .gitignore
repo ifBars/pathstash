@@ -1,0 +1,15 @@
+target/
+node_modules/
+.wrangler/
+.dev.vars
+dist/
+*.log
+infra/live-test-token.txt
+internal/
+plans/
+specs/
+notes/
+.codex/
+.devdrop/
+*.local.md
+*.internal.md
