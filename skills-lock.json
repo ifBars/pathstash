@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "skills": {
+    "404-page-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "10574b43f4c407357fe82accae1cfe7900241a9ed8709d5491fd8018d995a5f1"
+    },
+    "about-page-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "b5160f3eb51bcf4682a7ac64079fdc1e8463b6826364cc6d5a856f6791253bc8"
+    },
+    "brand-visual-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "e345397b2ee217e19d8349d45ad84b11bb6092038a15ba5e0f8b81bd28f92172"
+    },
+    "branding": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "7fadacd3c7bebbdeb579614bd607970a9866f78e5c8aedd6f34f026871aec7a3"
+    },
+    "breadcrumb-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "b7464caae98273ee3a8a3555beb436a850dc9a4eb7cac506781834f958734e72"
+    },
+    "card": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "50690ef34d6d4f334756f749fcf2f5e4b949d1b58f57ddd57e890b8a4963b7a2"
+    },
+    "carousel": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "88eb3fc2f8672b62968e1a613787327d04489aba6caf88115eadd62c27f38254"
+    },
+    "cta-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "091fcb191112a69a072c112e5900740acfcd97689554459b0532766c8b116b8a"
+    },
+    "design-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "d823593e24d7493ab740db8f082cbe3b148ed29af9e804d11f5302ad79e4b96d"
+    },
+    "footer-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "abf466f2c49de4d9a152d93713dc1035ff271f49f4e8f13417b8776d66cf9634"
+    },
+    "full-output-enforcement": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "524f7c7950c3fde726101613f630140411c7d080e63be718687f4b38f919be81"
+    },
+    "gpt-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "7bd1bfdda0e51016ca222693401a65fc0dd9bf9487e0bd5b1740ba510f6f963a"
+    },
+    "grid": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "599ff69a29a8f784155a39e7cb6c9784b50d8fd289323dbf903b75c6ffcffd91"
+    },
+    "heading-structure": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "13d70392af1d899c1db5cbaf8f47e74687b7b8e096de80244980844061420c3c"
+    },
+    "hero-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "4d4ea7324fb281b1996ae80425bf0ee164bbbc5878fc51672e2bbb42caea88cd"
+    },
+    "high-end-visual-design": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "f730e4132775f13eea19e3dc39afc6bb453cfc0498872b127ad8f0d47cfd802d"
+    },
+    "homepage-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "15637a4dd86b91eb2095b24b5a7b376a6cec5a569488ee0ff2a1b27492654cfc"
+    },
+    "image-optimization": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "790b50241759efc0adc12d066dd107f2bd8d40577942bfe6581cacf3079e4edf"
+    },
+    "image-taste-frontend": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "b5d4a607554867de877d7ca0d7433a5c9a544a433b25ad5f292ab41f9a295e92"
+    },
+    "industrial-brutalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "e66e5a2a8b73cef79ab6546459c665e8b983645689c5f3772f7eed8b9f1e8e0e"
+    },
+    "minimalist-ui": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "7e88897e0371184e97a82b8d9ef080323c13f21eb067b58ef71eb05173a08ac2"
+    },
+    "redesign-existing-projects": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "47eced3e960a2c961d3cbee11fa1216264f589344b586a5cbd03967cd6b9c54b"
+    },
+    "robots-txt": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "2d602e5f277d8f0f1987a518cedd6e46fc1f2f02082c8e6874d44ac305e900e2"
+    },
+    "shadcn": {
+      "source": "shadcn/ui",
+      "sourceType": "github",
+      "computedHash": "642a177bee320618caa49f5106cadb4e7594c606e867f61ba7b56d19cf745cd5"
+    },
+    "stitch-design-taste": {
+      "source": "Leonxlnx/taste-skill",
+      "sourceType": "github",
+      "computedHash": "acf2921a7e50c06e637f072ba52e36a994cbb44ecbe6e31435bc113b894f5499"
+    },
+    "trust-badges-generator": {
+      "source": "kostja94/marketing-skills",
+      "sourceType": "github",
+      "computedHash": "303fcc6ce266b2ffae7b98a1de0c15203ed28ddf5eb8efed1195418f7d5bace4"
+    }
+  }
+}

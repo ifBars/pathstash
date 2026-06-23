@@ -387,13 +387,6 @@ export default function App() {
           </div>
         </section>
 
-        <section className="mx-auto max-w-[1480px] px-4 pb-16 md:px-6">
-          <img
-            src="/images/pathstash-v1-concept.png"
-            alt="PathStash product concept showing marketing, pricing, and dashboard surfaces"
-            className="w-full rounded-md border border-stone-950/10 bg-white shadow-sm"
-          />
-        </section>
       </main>
     </div>
   );
